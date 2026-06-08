@@ -9,6 +9,7 @@ info bansos ai
 2. [Mimo](https://mimo.mi.com/)
 3. [Kiro](https://kiro.dev/pricing/)
 4. [bobtrial+](https://bob.ibm.com/pricing)
+   <img width="1242" height="1708" alt="image" src="https://github.com/user-attachments/assets/c00667bc-997d-4732-8248-08ef28f6da7e" />
 
 ## Broker Termurah
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
