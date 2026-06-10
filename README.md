@@ -20,3 +20,9 @@ info bansos ai
 2. [qwen](https://chat.qwen.ai/)
 3. [minimax](https://agent.minimax.io/)
 4. [deepseek](https://chat.deepseek.com/)
+
+## SKILL
+1. [Graphify](https://github.com/safishamsi/graphify)
+2. [Repomix](https://github.com/yamadashy/repomix)
+3. [Codegraph](https://github.com/colbymchenry/codegraph)
+
