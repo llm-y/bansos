@@ -10,6 +10,7 @@ info bansos ai
 3. [Kiro](https://kiro.dev/pricing/)
 4. [bobtrial+](https://bob.ibm.com/pricing)
 5. [FreeModel](https://freemodel.dev/invite/FRE-e1e3c216)
+6. [Nvidia](https://build.nvidia.com/models)
 
 ## Broker Termurah
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
