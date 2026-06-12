@@ -17,11 +17,13 @@ info bansos ai
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
 
 
-## LLM Oke
+## LLM Untuk Opini Independen
 1. [grok](https://grok.com/)
 2. [qwen](https://chat.qwen.ai/)
 3. [minimax](https://agent.minimax.io/)
 4. [deepseek](https://chat.deepseek.com/)
+5. [Zhipu](https://chat.z.ai/)
+6. [Kimi](https://www.kimi.com/chat/)
 
 ## SKILL
 1. [Graphify](https://github.com/safishamsi/graphify)
