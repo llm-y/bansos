@@ -18,18 +18,3 @@ info bansos ai
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
 
 
-## SKILL
-1. [Graphify](https://github.com/safishamsi/graphify)
-   ```txt
-   Cara mulai:
-    1. Minta Claude Code: "Install Graphify dari GitHub"
-    dia lakuin sendiri, lo gak perlu ngetik command apapun
-    2. Graphify otomatis install "skill" ke Claude
-    Jadi Claude paham command kayak `graphify query` tanpa lo ajarin manual
-    3. Jalankan:
-    `graphify hook install`
-    Graph diperbarui otomatis tiap lo save perubahan. Gratis selamanya.  
-   ```
-2. [Repomix](https://github.com/yamadashy/repomix)
-3. [Codegraph](https://github.com/colbymchenry/codegraph)
-
