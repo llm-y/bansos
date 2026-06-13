@@ -3,6 +3,7 @@ info bansos ai
 1. [Threads](https://www.threads.com/search?q=bansos&serp_type=default)
 2. [x ](https://x.com/search?q=bansos%20claude&src=typed_query&f=live)
 3. [Bansos AI](https://appverse.id/bansos-ai)
+4. [Bansos Dev](https://bansos.dev/list/)
 
 ## Promo Provider
 1. [Command Code](https://commandcode.ai/pricing)
