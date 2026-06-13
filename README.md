@@ -18,7 +18,7 @@ info bansos ai
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
 
 
-## LLM Untuk Opini Independen
+## LLM Untuk Review Hasil Independen
 1. [grok](https://grok.com/)
 2. [qwen](https://chat.qwen.ai/)
 3. [minimax](https://agent.minimax.io/)
