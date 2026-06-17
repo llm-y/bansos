@@ -18,6 +18,9 @@ info bansos ai
 
 C:\Users\<you>\.claude\settings.json
 
+Base URL:
+1. https://cc.freemodel.dev
+2. https://capi.aerolink.lat/
 ```json
 {
     "env": {
