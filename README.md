@@ -14,6 +14,7 @@ info bansos ai
 6. [Nvidia](https://build.nvidia.com/models)
 7. [Khusus OSS](https://claude.com/contact-sales/claude-for-oss)
 8. [Agent Router](https://agentrouter.org)
+9. [Unimodel](https://www.unimodel.ai/dashboard/overview)
 
 
 C:\Users\<you>\.claude\settings.json
