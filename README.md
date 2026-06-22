@@ -13,7 +13,7 @@ info bansos ai
 5. Claude Code : [FreeModel](https://freemodel.dev/invite/FRE-e1e3c216) , [aerolink](https://aerolink.lat/register?ref=QE-9CMM)
 6. [Nvidia](https://build.nvidia.com/models)
 7. [Khusus OSS](https://claude.com/contact-sales/claude-for-oss)
-8. 
+8. [Agent Router](https://agentrouter.org)
 
 
 C:\Users\<you>\.claude\settings.json
