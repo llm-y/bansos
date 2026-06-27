@@ -22,6 +22,8 @@ C:\Users\<you>\.claude\settings.json
 Base URL:
 1. https://cc.freemodel.dev
 2. https://capi.aerolink.lat/
+3. https://agentrouter.org/
+
 ```json
 {
     "env": {
@@ -36,6 +38,22 @@ Base URL:
     "apiKeyHelper": "echo 'YOUR_API_KEY'"
 }
 ```
+
+```json
+{
+    "env": {
+        "ANTHROPIC_AUTH_TOKEN": "YOUR_API_KEY",
+        "ANTHROPIC_API_KEY": "YOUR_API_KEY",
+        "ANTHROPIC_BASE_URL": "https://agentrouter.org/",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    },
+    "permissions": {
+        "allow": [],
+        "deny": []
+    }
+}
+```
+
 
 ## Broker Termurah
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
