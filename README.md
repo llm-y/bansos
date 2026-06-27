@@ -26,7 +26,7 @@ Base URL:
 {
     "env": {
         "ANTHROPIC_API_KEY": "YOUR_API_KEY",
-        "ANTHROPIC_BASE_URL": "https://capi.aerolink.lat/",
+        "ANTHROPIC_BASE_URL": "https://cc.freemodel.dev",
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
     },
     "permissions": {
