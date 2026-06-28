@@ -1,14 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 )
 
 // KeyEntry represents a single entry in bansos.csv with id and key
@@ -154,6 +157,33 @@ func generateSettings(apiKey string) Settings {
 	}
 }
 
+func validateKey(baseURL string, apiKey string) bool {
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	payload := `{"model":"claude-sonnet-4-20250514","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}`
+
+	req, err := http.NewRequest("POST", baseURL+"/v1/messages", bytes.NewBufferString(payload))
+	if err != nil {
+		return false
+	}
+
+	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("content-type", "application/json")
+	req.Header.Set("anthropic-version", "2023-06-01")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	// 200 or 400 means the key is accepted (authenticated)
+	// 401 or 403 means the key is invalid
+	return resp.StatusCode == 200 || resp.StatusCode == 400
+}
+
 func writeSettings(settingsPath string, settings Settings) error {
 	// Ensure the directory exists
 	dir := filepath.Dir(settingsPath)
@@ -295,10 +325,46 @@ func main() {
 		fmt.Printf("Current key: tidak ditemukan di bansos.csv\n")
 	}
 
-	fmt.Printf("Switched to: ID %s (%s)\n", nextEntry.ID, maskKey(nextEntry.Key))
+	// Build rotation order starting from nextEntry
+	baseURL := "https://cc.freemodel.dev"
+	startIdx := 0
+	for i, entry := range entries {
+		if entry.Key == nextEntry.Key {
+			startIdx = i
+			break
+		}
+	}
+
+	// Try all keys in rotation order starting from nextEntry
+	var validEntry *KeyEntry
+	for i := 0; i < len(entries); i++ {
+		idx := (startIdx + i) % len(entries)
+		candidate := entries[idx]
+
+		fmt.Printf("Validating ID %s... ", candidate.ID)
+		if validateKey(baseURL, candidate.Key) {
+			fmt.Println("valid")
+			validEntry = &entries[idx]
+			break
+		} else {
+			fmt.Println("invalid, skipping")
+		}
+	}
+
+	if validEntry == nil {
+		fmt.Fprintln(os.Stderr, "")
+		fmt.Fprintln(os.Stderr, "  Semua API key di bansos.csv sudah tidak valid!")
+		fmt.Fprintln(os.Stderr, "  Silakan perbaharui file bansos.csv dengan API key yang baru.")
+		fmt.Fprintln(os.Stderr, "")
+		fmt.Fprintf(os.Stderr, "  Lokasi file: %s\n", bansosPath)
+		fmt.Fprintln(os.Stderr, "")
+		os.Exit(1)
+	}
+
+	fmt.Printf("Switched to: ID %s (%s)\n", validEntry.ID, maskKey(validEntry.Key))
 
 	// Generate and write new settings
-	settings := generateSettings(nextEntry.Key)
+	settings := generateSettings(validEntry.Key)
 	if err := writeSettings(settingsPath, settings); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
