@@ -61,6 +61,14 @@ Base URL:
 
 ## Installation
 
+### Prasyarat
+
+Pastikan sudah melakukan instalasi [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code):
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
 ### Linux / macOS (Terminal)
 
 Jalankan perintah berikut di terminal:
