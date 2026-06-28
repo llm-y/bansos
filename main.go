@@ -158,6 +158,52 @@ func findBansosFile() (string, error) {
 	return "", fmt.Errorf("bansos.txt not found in current directory or executable directory")
 }
 
+func printFileNotFoundHelp() {
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  ERROR: File bansos.txt tidak ditemukan!")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Untuk menggunakan program ini, Anda perlu membuat file bansos.txt")
+	fmt.Fprintln(os.Stderr, "  di direktori yang sama dengan program ini.")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Cara membuat:")
+	fmt.Fprintln(os.Stderr, "    1. Buat file bernama bansos.txt di direktori saat ini")
+	fmt.Fprintln(os.Stderr, "    2. Isi dengan API key, satu key per baris")
+	fmt.Fprintln(os.Stderr, "    3. Pastikan tidak ada baris kosong di antara key")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Format penulisan (satu API key per baris):")
+	fmt.Fprintln(os.Stderr, "  ┌─────────────────────────────────────────────────┐")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy│")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz│")
+	fmt.Fprintln(os.Stderr, "  └─────────────────────────────────────────────────┘")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Contoh perintah untuk membuat file:")
+	fmt.Fprintln(os.Stderr, "    Linux/macOS : nano bansos.txt")
+	fmt.Fprintln(os.Stderr, "    Windows     : notepad bansos.txt")
+	fmt.Fprintln(os.Stderr, "")
+}
+
+func printFileEmptyHelp(bansosPath string) {
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintf(os.Stderr, "  ERROR: File bansos.txt kosong! (%s)\n", bansosPath)
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  File bansos.txt ditemukan, tetapi tidak berisi API key apapun.")
+	fmt.Fprintln(os.Stderr, "  Silakan isi dengan API key Anda, satu key per baris.")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Format penulisan (satu API key per baris):")
+	fmt.Fprintln(os.Stderr, "  ┌─────────────────────────────────────────────────┐")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy│")
+	fmt.Fprintln(os.Stderr, "  │ sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz│")
+	fmt.Fprintln(os.Stderr, "  └─────────────────────────────────────────────────┘")
+	fmt.Fprintln(os.Stderr, "")
+	fmt.Fprintln(os.Stderr, "  Tips:")
+	fmt.Fprintln(os.Stderr, "    - Satu API key per baris")
+	fmt.Fprintln(os.Stderr, "    - Jangan ada spasi di awal/akhir key")
+	fmt.Fprintln(os.Stderr, "    - Baris kosong akan diabaikan")
+	fmt.Fprintln(os.Stderr, "")
+}
+
 func main() {
 	// Get home directory
 	homeDir, err := getHomeDir()
@@ -171,7 +217,7 @@ func main() {
 	// Find bansos.txt
 	bansosPath, err := findBansosFile()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		printFileNotFoundHelp()
 		os.Exit(1)
 	}
 
@@ -180,7 +226,11 @@ func main() {
 	// Read the list of keys from bansos.txt
 	keys, err := readKeysList(bansosPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		if strings.Contains(err.Error(), "bansos.txt is empty") {
+			printFileEmptyHelp(bansosPath)
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		}
 		os.Exit(1)
 	}
 
