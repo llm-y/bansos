@@ -99,7 +99,18 @@ bansos
 
 ## Cara Penggunaan
 
-### 1. Siapkan file `bansos.csv`
+### 1. Daftar dan Generate API Key
+
+Sebelum mulai, kamu perlu mendaftar dan membuat API key:
+
+1. Buka link registrasi: [https://freemodel.dev/invite/FRE-e1e3c216](https://freemodel.dev/invite/FRE-e1e3c216)
+2. Siapkan Telegram untuk proses verifikasi akun
+3. Upayakan punya **5-10 akun**, masing-masing akun generate **1 API key**
+4. Kumpulkan semua API key tersebut untuk dimasukkan ke file CSV di langkah berikutnya
+
+> Semakin banyak API key yang kamu punya, semakin lancar rotasi key saat digunakan.
+
+### 2. Siapkan file `bansos.csv`
 
 Sebelum menjalankan `bansos`, kamu perlu membuat file `bansos.csv` di direktori tempat kamu akan menjalankan perintah. File ini berisi daftar API key dalam format CSV dengan header `id,key`.
 
@@ -116,7 +127,7 @@ bukped,sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
 > Baris pertama harus header `id,key`. Setiap baris berikutnya berisi ID dan API key dipisahkan koma. Pastikan tidak ada spasi tambahan.
 
-### 2. Jalankan perintah
+### 3. Jalankan perintah
 
 Buka terminal di direktori yang berisi `bansos.csv`, lalu jalankan:
 
@@ -124,7 +135,7 @@ Buka terminal di direktori yang berisi `bansos.csv`, lalu jalankan:
 bansos
 ```
 
-### 3. Apa yang terjadi
+### 4. Apa yang terjadi
 
 Ketika dijalankan, `bansos` akan:
 
