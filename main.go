@@ -225,19 +225,34 @@ func checkClaudeExists() bool {
 	return err == nil
 }
 
-func isKeyLimited() bool {
+// checkTokenStatus checks the Claude CLI token status.
+// Returns "active", "limited", or "server_unavailable".
+func checkTokenStatus() string {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, "claude", "-p", "ping")
 	output, err := cmd.CombinedOutput()
-	if err != nil {
-		// Command failed, key is likely limited or there's an error
-		return true
+	lower := strings.ToLower(string(output))
+
+	// Check for server-side issues first (503, service unavailable)
+	serverKeywords := []string{
+		"503",
+		"service unavailable",
+		"server-side issue",
+	}
+	for _, keyword := range serverKeywords {
+		if strings.Contains(lower, keyword) {
+			return "server_unavailable"
+		}
 	}
 
-	// Check output for limit-related keywords (case-insensitive)
-	lower := strings.ToLower(string(output))
+	// If command failed with non-server error, treat as limited
+	if err != nil {
+		return "limited"
+	}
+
+	// Check output for token limit-related keywords (case-insensitive)
 	limitKeywords := []string{
 		"rate limit",
 		"rate_limit",
@@ -246,17 +261,15 @@ func isKeyLimited() bool {
 		"limit reached",
 		"too many requests",
 		"429",
-		"overloaded",
-		"capacity",
 	}
 
 	for _, keyword := range limitKeywords {
 		if strings.Contains(lower, keyword) {
-			return true
+			return "limited"
 		}
 	}
 
-	return false
+	return "active"
 }
 
 func writeSettings(settingsPath string, settings Settings) error {
@@ -414,11 +427,17 @@ func run() int {
 
 		// Check if current key is still working
 		fmt.Println("Mengecek apakah token masih aktif...")
-		if !isKeyLimited() {
+		status := checkTokenStatus()
+		switch status {
+		case "active":
 			fmt.Println("Token masih aktif, tidak perlu rotasi.")
 			return 0
+		case "server_unavailable":
+			fmt.Println("Server sedang penuh (503). Ini bukan masalah token. Silakan tunggu beberapa menit dan coba lagi.")
+			return 0
+		case "limited":
+			fmt.Println("Token sudah limit, melanjutkan rotasi...")
 		}
-		fmt.Println("Token sudah limit, melanjutkan rotasi...")
 	}
 
 	// Get next entry
