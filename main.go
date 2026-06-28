@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -218,6 +220,45 @@ func validateKey(baseURL string, apiKey string) bool {
 	return resp.StatusCode == 200 || resp.StatusCode == 400
 }
 
+func checkClaudeExists() bool {
+	_, err := exec.LookPath("claude")
+	return err == nil
+}
+
+func isKeyLimited() bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "claude", "-p", "ping")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		// Command failed, key is likely limited or there's an error
+		return true
+	}
+
+	// Check output for limit-related keywords (case-insensitive)
+	lower := strings.ToLower(string(output))
+	limitKeywords := []string{
+		"rate limit",
+		"rate_limit",
+		"exceeded",
+		"quota",
+		"limit reached",
+		"too many requests",
+		"429",
+		"overloaded",
+		"capacity",
+	}
+
+	for _, keyword := range limitKeywords {
+		if strings.Contains(lower, keyword) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func writeSettings(settingsPath string, settings Settings) error {
 	// Ensure the directory exists
 	dir := filepath.Dir(settingsPath)
@@ -356,6 +397,28 @@ func run() int {
 		fmt.Printf("Could not read current key from settings.json: %v\n", err)
 		fmt.Println("Using first key from bansos.csv")
 		currentKey = ""
+	}
+
+	// If we have a current key, check if it's still working before rotating
+	if currentKey != "" {
+		// Check if claude CLI exists
+		if !checkClaudeExists() {
+			fmt.Fprintln(os.Stderr, "")
+			fmt.Fprintln(os.Stderr, "  ERROR: Perintah 'claude' tidak ditemukan!")
+			fmt.Fprintln(os.Stderr, "")
+			fmt.Fprintln(os.Stderr, "  Silakan install Claude Code CLI terlebih dahulu:")
+			fmt.Fprintln(os.Stderr, "    npm install -g @anthropic-ai/claude-code")
+			fmt.Fprintln(os.Stderr, "")
+			return 1
+		}
+
+		// Check if current key is still working
+		fmt.Println("Mengecek apakah token masih aktif...")
+		if !isKeyLimited() {
+			fmt.Println("Token masih aktif, tidak perlu rotasi.")
+			return 0
+		}
+		fmt.Println("Token sudah limit, melanjutkan rotasi...")
 	}
 
 	// Get next entry
