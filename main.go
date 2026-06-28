@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -367,11 +368,49 @@ func printFileEmptyHelp(bansosPath string) {
 }
 
 func main() {
-	exitCode := run()
+	loopInterval := flag.Int("loop", 0, "Interval dalam menit untuk menjalankan secara berulang (0 = sekali jalan)")
+	flag.Parse()
+
+	if *loopInterval <= 0 {
+		// Mode sekali jalan (default behavior)
+		exitCode := run()
+		fmt.Println("")
+		fmt.Print("Press Enter to exit...")
+		bufio.NewReader(os.Stdin).ReadBytes('\n')
+		os.Exit(exitCode)
+	}
+
+	// Mode loop
+	fmt.Printf("Mode loop: akan dijalankan setiap %d menit. Tekan Enter untuk keluar.\n", *loopInterval)
 	fmt.Println("")
-	fmt.Print("Press Enter to exit...")
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
-	os.Exit(exitCode)
+
+	// Channel untuk mendeteksi Enter key
+	enterPressed := make(chan struct{})
+	go func() {
+		bufio.NewReader(os.Stdin).ReadBytes('\n')
+		close(enterPressed)
+	}()
+
+	// Jalankan pertama kali
+	fmt.Printf("[%s] Menjalankan...\n", time.Now().Format("2006-01-02 15:04:05"))
+	run()
+
+	ticker := time.NewTicker(time.Duration(*loopInterval) * time.Minute)
+	defer ticker.Stop()
+
+	for {
+		nextRun := time.Now().Add(time.Duration(*loopInterval) * time.Minute)
+		fmt.Printf("\nJalan berikutnya: %s\n", nextRun.Format("2006-01-02 15:04:05"))
+
+		select {
+		case <-enterPressed:
+			fmt.Println("\nKeluar dari loop.")
+			return
+		case <-ticker.C:
+			fmt.Printf("\n[%s] Menjalankan...\n", time.Now().Format("2006-01-02 15:04:05"))
+			run()
+		}
+	}
 }
 
 func run() int {
