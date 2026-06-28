@@ -107,3 +107,7 @@ echo "  Run 'bansos' to get started."
 echo ""
 echo "Jalankan script ini kapan saja untuk update ke versi terbaru."
 echo ""
+
+if [ -t 0 ]; then
+  read -p "Press Enter to exit..."
+fi
