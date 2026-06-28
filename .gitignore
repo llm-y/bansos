@@ -1,9 +1,10 @@
-# Dependencies
-.psci_modules
-.spago
-bower_components
-node_modules
+# Binary
+bansos
+bansos.exe
 
-# Generated files
-.psci
-output
+# Test files
+bansos.txt
+
+# IDE
+.idea/
+.vscode/
