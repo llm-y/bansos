@@ -59,3 +59,40 @@ Base URL:
 1. [Vietnam](https://t.me/tai_khoan_ai_bot)
 
 
+## Installation
+
+### Linux / macOS (Terminal)
+
+Jalankan perintah berikut di terminal:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/llm-y/bansos/main/install.sh | bash
+```
+
+Script ini akan:
+1. Mendeteksi OS dan arsitektur (amd64/arm64) secara otomatis
+2. Download binary terbaru dari GitHub Releases
+3. Rename menjadi `bansos` dan install ke `/usr/local/bin`
+4. Siap dijalankan dari terminal manapun
+
+### Windows (PowerShell)
+
+Jalankan perintah berikut di PowerShell (Run as Administrator jika diperlukan):
+
+```powershell
+irm https://raw.githubusercontent.com/llm-y/bansos/main/install.ps1 | iex
+```
+
+Script ini akan:
+1. Mendeteksi arsitektur (amd64/arm64) secara otomatis
+2. Download binary terbaru dari GitHub Releases
+3. Rename menjadi `bansos.exe` dan install ke folder yang ada di PATH
+4. Siap dijalankan dari PowerShell atau Command Prompt manapun
+
+### Verifikasi Instalasi
+
+Setelah install, buka terminal/PowerShell baru dan jalankan:
+
+```bash
+bansos
+```
