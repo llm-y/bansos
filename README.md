@@ -32,7 +32,7 @@ Base URL:
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
     },
     "permissions": {
-        "allow": [],
+        "allow": ["Bash", "Write", "Edit"],
         "deny": []
     },
     "apiKeyHelper": "echo 'YOUR_API_KEY'"
@@ -48,7 +48,7 @@ Base URL:
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
     },
     "permissions": {
-        "allow": [],
+        "allow": ["Bash", "Write", "Edit"],
         "deny": []
     }
 }
