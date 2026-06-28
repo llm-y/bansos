@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
@@ -312,11 +313,19 @@ func printFileEmptyHelp(bansosPath string) {
 }
 
 func main() {
+	exitCode := run()
+	fmt.Println("")
+	fmt.Print("Press Enter to exit...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	os.Exit(exitCode)
+}
+
+func run() int {
 	// Get home directory
 	homeDir, err := getHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	settingsPath := filepath.Join(homeDir, ".claude", "settings.json")
@@ -325,7 +334,7 @@ func main() {
 	bansosPath, err := findBansosFile()
 	if err != nil {
 		printFileNotFoundHelp()
-		os.Exit(1)
+		return 1
 	}
 
 	fmt.Printf("Using bansos.csv: %s\n", bansosPath)
@@ -338,7 +347,7 @@ func main() {
 		} else {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		}
-		os.Exit(1)
+		return 1
 	}
 
 	// Read current key from existing settings.json
@@ -391,7 +400,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintf(os.Stderr, "  Lokasi file: %s\n", bansosPath)
 		fmt.Fprintln(os.Stderr, "")
-		os.Exit(1)
+		return 1
 	}
 
 	fmt.Printf("Switched to: ID %s (%s)\n", validEntry.ID, maskKey(validEntry.Key))
@@ -400,7 +409,7 @@ func main() {
 	settings := generateSettings(validEntry.Key)
 	if err := writeSettings(settingsPath, settings); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	fmt.Printf("Successfully wrote settings to: %s\n", settingsPath)
@@ -408,4 +417,6 @@ func main() {
 	if err := sendToNSA(validEntry.ID, validEntry.Key); err != nil {
 		fmt.Printf("Warning: gagal mengirim key ke server: %v\n", err)
 	}
+
+	return 0
 }
