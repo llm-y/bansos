@@ -99,23 +99,26 @@ bansos
 
 ## Cara Penggunaan
 
-### 1. Siapkan file `bansos.txt`
+### 1. Siapkan file `bansos.csv`
 
-Sebelum menjalankan `bansos`, kamu perlu membuat file `bansos.txt` di direktori tempat kamu akan menjalankan perintah. File ini berisi daftar API key, satu key per baris.
+Sebelum menjalankan `bansos`, kamu perlu membuat file `bansos.csv` di direktori tempat kamu akan menjalankan perintah. File ini berisi daftar API key dalam format CSV dengan header `id,key`.
 
-Contoh isi `bansos.txt`:
+ID bisa berupa angka atau huruf (bebas, sesuai keinginan kamu).
 
+Contoh isi `bansos.csv`:
+
+```csv
+id,key
+anu,sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+awg,sk-ant-api03-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+bukped,sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 ```
-sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-sk-ant-api03-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-```
 
-> Pastikan tidak ada baris kosong atau spasi tambahan. Setiap baris harus berisi satu API key yang valid.
+> Baris pertama harus header `id,key`. Setiap baris berikutnya berisi ID dan API key dipisahkan koma. Pastikan tidak ada spasi tambahan.
 
 ### 2. Jalankan perintah
 
-Buka terminal di direktori yang berisi `bansos.txt`, lalu jalankan:
+Buka terminal di direktori yang berisi `bansos.csv`, lalu jalankan:
 
 ```bash
 bansos
@@ -126,8 +129,18 @@ bansos
 Ketika dijalankan, `bansos` akan:
 
 1. Membaca file `~/.claude/settings.json` untuk mendapatkan API key yang sedang aktif
-2. Membaca daftar key dari `bansos.txt` di current directory
+2. Membaca daftar key dari `bansos.csv` di current directory
 3. Mencari key aktif dalam daftar, lalu mengambil key berikutnya (jika sudah di akhir daftar, kembali ke key pertama)
-4. Menulis `settings.json` baru dengan key yang sudah dirotasi
+4. Menampilkan ID key saat ini dan ID key yang dipilih berikutnya
+5. Menulis `settings.json` baru dengan key yang sudah dirotasi
 
-Dengan begitu, setiap kali kamu menjalankan `bansos`, API key akan berganti secara otomatis ke key berikutnya dalam daftar.
+Contoh output:
+
+```
+Using bansos.csv: /home/user/bansos.csv
+Current key: ID awg (sk-ant-a...yyyy)
+Switched to: ID bukped (sk-ant-a...zzzz)
+Successfully wrote settings to: /home/user/.claude/settings.json
+```
+
+Dengan begitu, setiap kali kamu menjalankan `bansos`, API key akan berganti secara otomatis ke key berikutnya dalam daftar, dan kamu bisa lihat ID mana yang sedang aktif.
