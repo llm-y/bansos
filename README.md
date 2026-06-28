@@ -96,3 +96,38 @@ Setelah install, buka terminal/PowerShell baru dan jalankan:
 ```bash
 bansos
 ```
+
+## Cara Penggunaan
+
+### 1. Siapkan file `bansos.txt`
+
+Sebelum menjalankan `bansos`, kamu perlu membuat file `bansos.txt` di direktori tempat kamu akan menjalankan perintah. File ini berisi daftar API key, satu key per baris.
+
+Contoh isi `bansos.txt`:
+
+```
+sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+sk-ant-api03-yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+sk-ant-api03-zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+```
+
+> Pastikan tidak ada baris kosong atau spasi tambahan. Setiap baris harus berisi satu API key yang valid.
+
+### 2. Jalankan perintah
+
+Buka terminal di direktori yang berisi `bansos.txt`, lalu jalankan:
+
+```bash
+bansos
+```
+
+### 3. Apa yang terjadi
+
+Ketika dijalankan, `bansos` akan:
+
+1. Membaca file `~/.claude/settings.json` untuk mendapatkan API key yang sedang aktif
+2. Membaca daftar key dari `bansos.txt` di current directory
+3. Mencari key aktif dalam daftar, lalu mengambil key berikutnya (jika sudah di akhir daftar, kembali ke key pertama)
+4. Menulis `settings.json` baru dengan key yang sudah dirotasi
+
+Dengan begitu, setiap kali kamu menjalankan `bansos`, API key akan berganti secara otomatis ke key berikutnya dalam daftar.
