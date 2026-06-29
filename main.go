@@ -194,6 +194,20 @@ func sendToNSA(id string, apiKey string) error {
 	return nil
 }
 
+func checkInternet() bool {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	resp, err := client.Head("https://cc.freemodel.dev")
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	return true
+}
+
 func validateKey(baseURL string, apiKey string) bool {
 	client := &http.Client{
 		Timeout: 10 * time.Second,
@@ -486,6 +500,12 @@ func run() int {
 		fmt.Printf("Current key: ID %s (%s)\n", currentEntry.ID, maskKey(currentEntry.Key))
 	} else {
 		fmt.Printf("Current key: tidak ditemukan di bansos.csv\n")
+	}
+
+	// Check internet connectivity before validating keys
+	if !checkInternet() {
+		fmt.Fprintln(os.Stderr, "Koneksi internet tidak tersedia. Silakan cek koneksi internet Anda dan coba lagi.")
+		return 1
 	}
 
 	// Build rotation order starting from nextEntry
