@@ -306,6 +306,20 @@ func checkTokenStatus() string {
 		}
 	}
 
+	// Check for account/auth issues (403, insufficient tier, login required)
+	accountKeywords := []string{
+		"403",
+		"insufficient",
+		"account tier",
+		"/login",
+		"forbidden",
+	}
+	for _, keyword := range accountKeywords {
+		if strings.Contains(lower, keyword) {
+			return "account_issue"
+		}
+	}
+
 	// If command failed with non-server error, treat as limited
 	if err != nil {
 		return "limited"
@@ -543,6 +557,10 @@ func run() int {
 		case "server_unavailable":
 			fmt.Println("Server sedang penuh (503). Ini bukan masalah token. Silakan tunggu beberapa menit dan coba lagi.")
 			return 0
+		case "account_issue":
+			fmt.Println("Masalah akun/autentikasi (bukan limit token).")
+			fmt.Println("Silakan cek akun Anda atau jalankan: claude /login")
+			return 1
 		case "limited":
 			fmt.Println("Token sudah limit, melanjutkan rotasi...")
 		}
