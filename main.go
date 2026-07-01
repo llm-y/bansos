@@ -18,6 +18,8 @@ import (
 	"time"
 )
 
+var debugMode bool
+
 // KeyEntry represents a single entry in bansos.csv with id and key
 type KeyEntry struct {
 	ID  string
@@ -201,9 +203,17 @@ func checkInternet() bool {
 
 	resp, err := client.Head("https://cc.freemodel.dev")
 	if err != nil {
+		if debugMode {
+			fmt.Printf("[DEBUG] checkInternet error: %v\n", err)
+		}
 		return false
 	}
 	defer resp.Body.Close()
+
+	if debugMode {
+		fmt.Printf("[DEBUG] checkInternet HEAD https://cc.freemodel.dev\n")
+		fmt.Printf("[DEBUG] Response Status: %d\n", resp.StatusCode)
+	}
 
 	return true
 }
@@ -215,8 +225,12 @@ func validateKey(baseURL string, apiKey string) bool {
 
 	payload := `{"model":"claude-sonnet-4-20250514","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}`
 
-	req, err := http.NewRequest("POST", baseURL+"/v1/messages", bytes.NewBufferString(payload))
+	url := baseURL + "/v1/messages"
+	req, err := http.NewRequest("POST", url, bytes.NewBufferString(payload))
 	if err != nil {
+		if debugMode {
+			fmt.Printf("[DEBUG] validateKey request creation error: %v\n", err)
+		}
 		return false
 	}
 
@@ -224,11 +238,33 @@ func validateKey(baseURL string, apiKey string) bool {
 	req.Header.Set("content-type", "application/json")
 	req.Header.Set("anthropic-version", "2023-06-01")
 
+	if debugMode {
+		fmt.Printf("[DEBUG] POST %s\n", url)
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
+		if debugMode {
+			fmt.Printf("[DEBUG] validateKey request error: %v\n", err)
+		}
 		return false
 	}
 	defer resp.Body.Close()
+
+	if debugMode {
+		fmt.Printf("[DEBUG] Response Status: %d\n", resp.StatusCode)
+		body, readErr := io.ReadAll(resp.Body)
+		if readErr == nil {
+			bodyStr := string(body)
+			if len(bodyStr) > 300 {
+				bodyStr = bodyStr[:300] + "..."
+			}
+			fmt.Printf("[DEBUG] Response Body: %s\n", bodyStr)
+		}
+		// 200 or 400 means the key is accepted (authenticated)
+		// 401 or 403 means the key is invalid
+		return resp.StatusCode == 200 || resp.StatusCode == 400
+	}
 
 	// 200 or 400 means the key is accepted (authenticated)
 	// 401 or 403 means the key is invalid
@@ -249,6 +285,13 @@ func checkTokenStatus() string {
 	cmd := exec.CommandContext(ctx, "claude", "-p", "ping")
 	output, err := cmd.CombinedOutput()
 	lower := strings.ToLower(string(output))
+
+	if debugMode {
+		fmt.Printf("[DEBUG] claude -p \"ping\" output:\n%s\n", string(output))
+		if err != nil {
+			fmt.Printf("[DEBUG] claude -p \"ping\" error: %v\n", err)
+		}
+	}
 
 	// Check for server-side issues first (503, service unavailable)
 	serverKeywords := []string{
@@ -383,7 +426,10 @@ func printFileEmptyHelp(bansosPath string) {
 
 func main() {
 	loopInterval := flag.Int("loop", 0, "Interval dalam menit untuk menjalankan secara berulang (0 = sekali jalan)")
+	debug := flag.Bool("debug", false, "Tampilkan debug output (response dari server)")
 	flag.Parse()
+
+	debugMode = *debug
 
 	if *loopInterval <= 0 {
 		// Mode sekali jalan (default behavior)
