@@ -34,8 +34,21 @@ $Arch = if ([System.Environment]::Is64BitOperatingSystem) {
 
 $AssetName = "bansos-windows-${Arch}.exe"
 
-Write-Host "[1/6] Detected Architecture: $Arch"
-Write-Host "[2/6] Downloading latest release of $AssetName..."
+Write-Host "[1/7] Detected Architecture: $Arch"
+
+# Check if bansos.exe is currently running and kill it
+Write-Host "[2/7] Checking for running bansos.exe processes..."
+$bansosProcs = Get-Process -Name "bansos" -ErrorAction SilentlyContinue
+if ($bansosProcs) {
+    Write-Host "  bansos.exe is currently running. Stopping process..."
+    $bansosProcs | Stop-Process -Force
+    Write-Host "  Process stopped. Waiting for file handle release..."
+    Start-Sleep -Seconds 2
+} else {
+    Write-Host "  No running bansos.exe process detected."
+}
+
+Write-Host "[3/7] Downloading latest release of $AssetName..."
 
 # Get latest release info
 $ReleaseUrl = "https://api.github.com/repos/$Repo/releases/latest"
@@ -69,12 +82,35 @@ if (-not (Test-Path $InstallDir)) {
 
 $DestPath = Join-Path $InstallDir $BinaryName
 
-# Download binary
-Write-Host "[3/6] Installing to $DestPath..."
-Invoke-WebRequest -Uri $DownloadUrl -OutFile $DestPath -UseBasicParsing
+# Download binary to temp file first, then move to destination
+Write-Host "[4/7] Installing to $DestPath..."
+$TempPath = Join-Path $env:TEMP "bansos_update_$([System.Guid]::NewGuid().ToString('N')).exe"
+Invoke-WebRequest -Uri $DownloadUrl -OutFile $TempPath -UseBasicParsing
+
+# Move temp file to destination (retry if file is still locked)
+$maxRetries = 3
+$retryCount = 0
+$installed = $false
+while (-not $installed -and $retryCount -lt $maxRetries) {
+    try {
+        Copy-Item -Path $TempPath -Destination $DestPath -Force -ErrorAction Stop
+        $installed = $true
+    } catch {
+        $retryCount++
+        if ($retryCount -lt $maxRetries) {
+            Write-Host "  File is still locked, retrying in 2 seconds... (attempt $retryCount/$maxRetries)"
+            Start-Sleep -Seconds 2
+        } else {
+            Remove-Item -Path $TempPath -Force -ErrorAction SilentlyContinue
+            Write-Error "Error: Could not write to $DestPath after $maxRetries attempts. Please close bansos.exe and try again."
+            exit 1
+        }
+    }
+}
+Remove-Item -Path $TempPath -Force -ErrorAction SilentlyContinue
 
 # Bypass Smart App Control & Unblock binary
-Write-Host "[4/6] Bypassing Smart App Control & unblocking binary..."
+Write-Host "[5/7] Bypassing Smart App Control & unblocking binary..."
 try {
     # Remove Mark of the Web (MOTW) so Windows does not flag as untrusted
     Unblock-File -Path "$DestPath" -ErrorAction Stop
@@ -104,7 +140,7 @@ try {
 }
 
 # Add Windows Firewall rule to allow bansos outbound network access
-Write-Host "[5/6] Configuring Windows Firewall..."
+Write-Host "[6/7] Configuring Windows Firewall..."
 try {
     # Remove existing rule if present (to avoid duplicates)
     $existingRule = Get-NetFirewallRule -DisplayName "Allow Bansos Outbound" -ErrorAction SilentlyContinue
@@ -127,7 +163,7 @@ try {
 }
 
 # Add Windows Defender exclusion for the binary path
-Write-Host "[6/6] Adding Windows Defender exclusion..."
+Write-Host "[7/7] Adding Windows Defender exclusion..."
 try {
     Add-MpPreference -ExclusionPath "$DestPath" -ErrorAction Stop
     Write-Host "  Windows Defender exclusion added for: $DestPath"
