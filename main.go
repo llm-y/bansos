@@ -18,6 +18,7 @@ import (
 	"time"
 )
 
+var version = "dev"
 var debugMode bool
 
 // KeyEntry represents a single entry in bansos.csv with id and key
@@ -427,7 +428,15 @@ func printFileEmptyHelp(bansosPath string) {
 func main() {
 	loopInterval := flag.Int("loop", 0, "Interval dalam menit untuk menjalankan secara berulang (0 = sekali jalan)")
 	debug := flag.Bool("debug", false, "Tampilkan debug output (response dari server)")
+	showVersion := flag.Bool("version", false, "Tampilkan versi program")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("bansos %s\n", version)
+		os.Exit(0)
+	}
+
+	fmt.Printf("bansos %s\n", version)
 
 	debugMode = *debug
 
