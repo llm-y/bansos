@@ -29,8 +29,7 @@ Delete the existing directory if present, then recreate it. In File Explorer or 
 
 ```sh
 # PowerShell
- Remove-Item -Recurse -Force ~\.codex -ErrorAction SilentlyContinue
- New-Item -ItemType Directory ~\.codex
+Remove-Item -Recurse -Force ~\.codex -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; New-Item -ItemType Directory ~\.codex -Force
 ```
 
 In C:\Users\<your-username>\.codex, delete any existing auth.json then create a new one:
