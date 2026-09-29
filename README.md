@@ -25,6 +25,8 @@ npm install -g @openai/codex
 brew install codex
 ```
 
+Delete the existing directory if present, then recreate it. In File Explorer or PowerShell:
+
 ```sh
 # PowerShell
  Remove-Item -Recurse -Force ~\.codex -ErrorAction SilentlyContinue
