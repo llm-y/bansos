@@ -28,8 +28,18 @@ brew install codex
 Delete the existing directory if present, then recreate it. In File Explorer or PowerShell:
 
 ```sh
-# PowerShell
-Remove-Item -Recurse -Force ~\.codex -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; New-Item -ItemType Directory ~\.codex -Force
+# Kill any process that might be using it (optional)
+Get-Process | Where-Object { $_.Path -like "*codex*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+
+# Then delete again
+Remove-Item -Recurse -Force "$env:USERPROFILE\.codex" -ErrorAction SilentlyContinue
+
+# Confirm it’s gone
+Test-Path "$env:USERPROFILE\.codex"
+# Should return: False
+
+# Create it
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.codex" -Force
 ```
 
 In C:\Users\<your-username>\.codex, delete any existing auth.json then create a new one:
