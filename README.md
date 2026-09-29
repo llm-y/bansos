@@ -17,7 +17,53 @@ info bansos ai
 9. [Agent Router](https://agentrouter.org)
 10. [Unimodel](https://www.unimodel.ai/dashboard/overview)
 
+## OpenAi Base
 
+```sh
+npm install -g @openai/codex
+ # or 
+brew install codex
+```
+
+```sh
+# PowerShell
+ Remove-Item -Recurse -Force ~\.codex -ErrorAction SilentlyContinue
+ New-Item -ItemType Directory ~\.codex
+```
+
+In C:\Users\<your-username>\.codex, delete any existing auth.json then create a new one:
+
+```sh
+{
+   "OPENAI_API_KEY" : "YOUR_API_KEY" 
+}
+```
+
+In C:\Users\<your-username>\.codex, delete any existing config.toml then create a new one:
+
+```sh
+model_provider = "freemodel" 
+model = "gpt-5.5" 
+model_reasoning_effort = "xhigh" 
+disable_response_storage = true 
+preferred_auth_method = "apikey" 
+
+[model_providers.freemodel] 
+name = "freemodel" 
+base_url = "https://api.freemodel.dev" 
+wire_api = "responses" 
+requires_openai_auth = true
+```
+
+C:\Users\<your-username>\.codex\config.toml
+
+Check version
+
+```sh
+codex -V
+```
+
+## Anthropic Base
 C:\Users\<you>\.claude\settings.json
 
 Base URL:
