@@ -46,22 +46,22 @@ In C:\Users\<your-username>\.codex, delete any existing auth.json then create a 
 
 ```sh
 {
-   "OPENAI_API_KEY" : "YOUR_API_KEY" 
+   "OPENAI_API_KEY" : "llmy" 
 }
 ```
 
 In C:\Users\<your-username>\.codex, delete any existing config.toml then create a new one:
 
 ```sh
-model_provider = "freemodel" 
-model = "gpt-5.5" 
+model_provider = "llmy" 
+model = "llmy" 
 model_reasoning_effort = "xhigh" 
 disable_response_storage = true 
 preferred_auth_method = "apikey" 
 
 [model_providers.freemodel] 
-name = "freemodel" 
-base_url = "https://api.freemodel.dev" 
+name = "llmy" 
+base_url = "https://ll.my.id" 
 wire_api = "responses" 
 requires_openai_auth = true
 ```
