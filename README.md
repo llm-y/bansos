@@ -19,6 +19,36 @@ info bansos ai
 
 ## OpenAi Base
 
+Check EndPoint First
+
+```sh
+Invoke-RestMethod -Uri "https://fewer-bearing-restaurant-beautiful.trycloudflare.com/v1/responses" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "model": "llmy",
+    "input": [
+      {"role": "user", "content": "ping"},
+      {"role": "system", "content": "You are a helpful assistant."}
+    ]
+  }'
+```
+
+```sh
+Invoke-RestMethod -Uri "https://fewer-bearing-restaurant-beautiful.trycloudflare.com/v1/responses" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "model": "llmy",
+    "input": [
+      {"role": "user", "content": "ping"},
+      {"role": "system", "content": "You are a helpful assistant."}
+    ]
+  }'
+```
+
+install codex
+
 ```sh
 npm install -g @openai/codex
  # or 
@@ -42,7 +72,9 @@ Test-Path "$env:USERPROFILE\.codex"
 New-Item -ItemType Directory -Path "$env:USERPROFILE\.codex" -Force
 ```
 
-In C:\Users\<your-username>\.codex, delete any existing auth.json then create a new one:
+In C:\Users\<your-username>\.codex, 
+
+delete any existing auth.json then create a new one:
 
 ```sh
 {
@@ -50,7 +82,7 @@ In C:\Users\<your-username>\.codex, delete any existing auth.json then create a 
 }
 ```
 
-In C:\Users\<your-username>\.codex, delete any existing config.toml then create a new one:
+delete any existing config.toml then create a new one:
 
 ```sh
 model_provider = "llmy" 
@@ -65,8 +97,6 @@ base_url = "https://ll.my.id"
 wire_api = "responses" 
 requires_openai_auth = true
 ```
-
-C:\Users\<your-username>\.codex\config.toml
 
 Check version
 
